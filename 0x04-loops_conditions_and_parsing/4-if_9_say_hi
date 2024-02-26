@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-
-# This script displays "Best School" 10 times, and on the 9th iteration,
-# displays "Best School" and then "Hi" on a new line.
+# This script displays "Best School" 10 times, and Hi
 
 name="Best School"
 count=1
