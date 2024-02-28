@@ -9,7 +9,7 @@ end
 phone_number = ARGV[0]
 
 # Define the regular expression
-regex = /\A\d{10}\z/
+regex = /^\d{10}$/
 
 Match the regular expression against the input phone number
 if phone_number.match?(regex)
