@@ -10,7 +10,7 @@ end
 text = ARGV[0]
 
 # Define the regular expression
-regex = /hbt+n/
+regex = /hb?t?n/
 
 # Match the regular expression against the input text
 matches = text.scan(regex)
