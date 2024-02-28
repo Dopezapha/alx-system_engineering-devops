@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Get listening ports using netstat, filter by 'LISTEN' state
+netstat -tuln | grep 'LISTEN' | grep -v '\[::\]' | grep -v '^unix' | awk '{print $NF}' | sed 's|.*:||' | while read port; do
+    pid=$(netstat -tuln | grep ":$port " | awk '{print $7}' | cut -d '/' -f 1)
+    program=$(ps -p $pid -o comm=)
+    echo "Port: $port  PID: $pid  Program: $program"
+done
