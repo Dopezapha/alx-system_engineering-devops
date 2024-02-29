@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Function to update /etc/hosts file
+update_hosts_file() {
+    local host="$1"
+    local ip="$2"
+    echo "$ip    $host" | sudo tee -a /etc/hosts > /dev/null
+}
+
+# Update localhost resolution to 127.0.0.2
+update_hosts_file "localhost" "127.0.0.2"
+
+# Update facebook.com resolution to 8.8.8.8
+update_hosts_file "facebook.com" "8.8.8.8"
+
+# Restart networking service to apply changes
+sudo systemctl restart networking.service
+
+# Output confirmation message
+echo "Configuration completed successfully."
