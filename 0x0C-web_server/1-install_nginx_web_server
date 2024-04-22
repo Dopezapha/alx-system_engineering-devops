@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#A Bash script that configures a new Ubuntu machine to respect above requirements
 
 # Update package lists
 sudo apt update -y
