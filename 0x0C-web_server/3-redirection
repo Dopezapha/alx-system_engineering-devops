@@ -1,37 +1,11 @@
 #!/usr/bin/env bash
-#A Bash script containing commands to automatically configure a Ubuntu machine
+# install nginx server and change landing content
+apt-get -y update
+apt-get -y install nginx
+service nginx start
+echo 'Hello World!' | tee /var/www/html/index.html
+sed -i '24i\	rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
+#sed -i "s|location /redirect_me {|location /redirect_me {\n    rewrite ^/redirect_me\$ https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;|" /etc/nginx/sites-available/default
 
-# Update package lists
-sudo apt update -y
-
-# Install Nginx
-sudo apt install nginx -y
-
-# Set up default Nginx configuration
-echo "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
-
-# Create a new location block to handle the redirect
-sudo sh -c 'echo "
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
-
-    server_name _;
-
-    location /redirect_me {
-        return 301 https://example.com/new-page;
-    }
-
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
-}
-" > /etc/nginx/sites-available/default'
-
-# Restart Nginx to apply changes
-sudo service nginx restart
-
-echo "Nginx configuration updated successfully."
+nginx -t
+service nginx restart
