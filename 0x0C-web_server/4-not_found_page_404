@@ -1,29 +1,17 @@
 #!/usr/bin/env bash
 #A bash script to configure a Ubuntu machine with Nginx and custom 404 page
 
-# Function to check for errors
-check_error() {
-    if [ $? -ne 0 ]; then
-        echo "Error occurred. Exiting."
-        exit 1
-    fi
-}
-
 # Update package lists
 sudo apt update -y
-check_error
 
 # Install Nginx
 sudo apt install nginx -y
-check_error
 
 # Backup default Nginx configuration
 sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
-check_error
 
 # Set up default Nginx configuration with custom 404 page
 echo "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
-check_error
 
 # Create custom 404 page
 sudo sh -c 'echo "
@@ -40,14 +28,11 @@ sudo sh -c 'echo "
 </body>
 </html>
 " > /var/www/html/404.html'
-check_error
 
 # Modify Nginx configuration to use custom 404 page
 sudo sed -i 's/#error_page 404/error_page 404 \/404.html;/' /etc/nginx/sites-available/default
-check_error
 
 # Restart Nginx to apply changes
 sudo service nginx restart
-check_error
 
 echo "Nginx configuration updated successfully with custom 404 page."
