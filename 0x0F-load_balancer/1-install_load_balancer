@@ -39,8 +39,8 @@ frontend haproxy_balancer
 
 backend webservers
     balance roundrobin
-    server {replce_this_with_std_id} {replce this with your IP}:80 check
-    server {replce_this_with_std_id for web_02} {replce this with your IP}:80 check
+    server 530688-web-01 100.25.118.244:80 check
+    server 530688-web-02 54.146.80.147:80 check
 "
 
 echo "$server_config" | sudo dd status=none of=/etc/haproxy/haproxy.cfg
