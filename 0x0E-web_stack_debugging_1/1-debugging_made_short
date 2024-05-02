@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
-# Configures an Nginx server to listen to port 80
 
-# Creates a symbolic link (-s option) between the Nginx configuration file
-# and the sites enabled directory
-ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+# Set NGINX configuration file paths
+NGINX_SITES_AVAILABLE="/etc/nginx/sites-available/default"
+NGINX_SITES_ENABLED="/etc/nginx/sites-enabled/default"
 
-# Restart Nginx
+# Create a symbolic link between NGINX configuration files
+if [ ! -e "$NGINX_SITES_ENABLED" ]; then
+	    sudo ln -s "$NGINX_SITES_AVAILABLE" "$NGINX_SITES_ENABLED"
+	        echo "Symbolic link created: $NGINX_SITES_AVAILABLE -> $NGINX_SITES_ENABLED"
+	else
+		    echo "Symbolic link already exists: $NGINX_SITES_ENABLED"
+fi
+
+# Restart NGINX service to apply configuration changes
 sudo service nginx restart
-
-# Terminates the first Nginx process ID
-kill "${pgrep 'nginx' | head -1}"
