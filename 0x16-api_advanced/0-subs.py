@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-"""Get subreddit subscriber count"""
-
+"""Get subreddit subscriber count
+"""
 
 import requests
 
