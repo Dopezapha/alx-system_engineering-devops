@@ -1,22 +1,24 @@
 #!/usr/bin/python3
-"""Get subreddit subscriber count
-"""
+"""API subreddit checking"""
+
 
 import requests
 
 
 def number_of_subscribers(subreddit):
     """
-    Get the number of subscribers for a given subreddit.
+    Returns the number of subscribers for a given subreddit.
+    If the subreddit is invalid, returns 0.
     """
 
-    url = f"https://www.reddit.com/r/{subreddit}/about.json"
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers)
+    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    headers = {"User-Agent": "python-requests/2.28.1"}
 
-    if response.status_code == 200:
+    try:
+        response = requests.get(url, headers=headers, allow_redirects=False)
+        response.raise_for_status()
         data = response.json()
-        subscribers = data['data']['subscribers']
+        subscribers = data["data"]["subscribers"]
         return subscribers
-    else:
+    except (requests.exceptions.RequestException, KeyError):
         return 0
