@@ -1,44 +1,55 @@
 #!/usr/bin/python3
-
-
-"""API subreddit checking"""
-
-
+"""Function to count words in all hot posts of a given Reddit subreddit."""
 import requests
-from collections import Counter
 
 
-def count_words(subreddit, word_list, word_counts=Counter()):
-    """Fetches case-insensitive keyword counts
-        from hot article titles recursively.
-    Prints the sorted keyword counts in descending order.
+def count_words(subreddit, word_list, instances={}, after="", count=0):
+    """Prints counts of given words found in hot posts of a given subreddit.
+
+    Args:
+        subreddit (str): The subreddit to search.
+        word_list (list): The list of words to search for in post titles.
+        instances (obj): Key/value pairs of words/counts.
+        after (str): The parameter for the next page of the API results.
+        count (int): The parameter of results matched thus far.
     """
-    url = "https://reddit.com/r/{}/hot.json?limit=100&after={}".format(
-            subreddit,
-            word_counts.get('after', ''))
+    url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
+    headers = {
+        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
+    }
+    params = {
+        "after": after,
+        "count": count,
+        "limit": 100
+    }
+    response = requests.get(url, headers=headers, params=params,
+                            allow_redirects=False)
     try:
-        response = requests.get(url,
-                                headers={"User-Agent": "MyCoolScript"},
-                                allow_redirects=False)
-        response.raise_for_status()
-        data = response.json()
-        if 'data' in data and 'children' in data['data']:
-            lowercase_words = []
-            for post in data['data']['children']:
-                for word in post['data']['title'].lower().split():
-                    lowercase_words.append(word.strip(".,!?"))
-            titles = lowercase_words
+        results = response.json()
+        if response.status_code == 404:
+            raise Exception
+    except Exception:
+        print("")
+        return
 
-            word_counts.update(word for word in titles if word in word_list)
-            if 'after' in data['data']:
-                count_words(subreddit, word_list, word_counts)
-            else:
-                for word, count in word_counts.most_common():
-                    if count > 0:  # Skip words with no matches
-                        print(f"{word.lower()}: {count}")
-                    else:
-                        pass
-    except requests.exceptions.RequestException:
-        pass
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    results = results.get("data")
+    after = results.get("after")
+    count += results.get("dist")
+    for c in results.get("children"):
+        title = c.get("data").get("title").lower().split()
+        for word in word_list:
+            if word.lower() in title:
+                times = len([t for t in title if t == word.lower()])
+                if instances.get(word) is None:
+                    instances[word] = times
+                else:
+                    instances[word] += times
+
+    if after is None:
+        if len(instances) == 0:
+            print("")
+            return
+        instances = sorted(instances.items(), key=lambda kv: (-kv[1], kv[0]))
+        [print("{}: {}".format(k, v)) for k, v in instances]
+    else:
+        count_words(subreddit, word_list, instances, after, count)

@@ -1,36 +1,21 @@
 #!/usr/bin/python3
-
-
-"""API subreddit checking"""
-
-
+"""Function to print hot posts on a given Reddit subreddit."""
 import requests
 
 
 def top_ten(subreddit):
-    """Prints the titles of the top 10 hot posts from a subreddit.
-    Args:
-        subreddit: The name of the subreddit (without 'r/').
-        Prints the titles or None if invalid subreddit.
-    """
-
-    url = "https://reddit.com/r/{}/hot.json?limit=10&raw_json=1".format(
-        subreddit)
-
-    try:
-        response = requests.get(url, headers={"User-Agent": "python-requests/2.28.1"},
-                                allow_redirects=False)
-        response.raise_for_status()  # Raise exception for non-2xx status codes
-        data = response.json()
-        if 'data' in data and 'children' in data['data']:
-            for post in data['data']['children'][:10]:
-                print(post['data']['title'])
-            else:
-                print(None)
-
-    except requests.exceptions.RequestException:
-        print(None)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-        print(None)
+    """Print the titles of the 10 hottest posts on a given subreddit."""
+    url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
+    headers = {
+        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
+    }
+    params = {
+        "limit": 10
+    }
+    response = requests.get(url, headers=headers, params=params,
+                            allow_redirects=False)
+    if response.status_code == 404:
+        print("None")
+        return
+    results = response.json().get("data")
+    [print(c.get("data").get("title")) for c in results.get("children")]
